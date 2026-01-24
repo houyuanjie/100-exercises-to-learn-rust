@@ -37,13 +37,46 @@ impl Ticket {
     pub fn title(&self) -> &String {
         &self.title
     }
+    pub fn set_title(&mut self, title: impl Into<String>) {
+        let title = title.into();
+
+        if title.is_empty() {
+            panic!("Title cannot be empty");
+        }
+        if title.len() > 50 {
+            panic!("Title cannot be longer than 50 bytes");
+        }
+
+        self.title = title;
+    }
 
     pub fn description(&self) -> &String {
         &self.description
     }
+    pub fn set_description(&mut self, description: impl Into<String>) {
+        let description = description.into();
+
+        if description.is_empty() {
+            panic!("Description cannot be empty");
+        }
+        if description.len() > 500 {
+            panic!("Description cannot be longer than 500 bytes");
+        }
+
+        self.description = description;
+    }
 
     pub fn status(&self) -> &String {
         &self.status
+    }
+    pub fn set_status(&mut self, status: impl Into<String>) {
+        let status = status.into();
+
+        if status != "To-Do" && status != "In Progress" && status != "Done" {
+            panic!("Only `To-Do`, `In Progress`, and `Done` statuses are allowed");
+        }
+
+        self.status = status;
     }
 }
 
@@ -55,9 +88,9 @@ mod tests {
     #[test]
     fn works() {
         let mut ticket = Ticket::new("A title".into(), "A description".into(), "To-Do".into());
-        ticket.set_title("A new title".into());
-        ticket.set_description("A new description".into());
-        ticket.set_status("Done".into());
+        ticket.set_title("A new title" /* .into() */);
+        ticket.set_description("A new description" /* .into() */);
+        ticket.set_status("Done" /* .into() */);
 
         assert_eq!(ticket.title(), "A new title");
         assert_eq!(ticket.description(), "A new description");
@@ -67,13 +100,15 @@ mod tests {
     #[test]
     #[should_panic(expected = "Title cannot be empty")]
     fn title_cannot_be_empty() {
-        Ticket::new(valid_title(), valid_description(), "To-Do".into()).set_title("".into());
+        Ticket::new(valid_title(), valid_description(), "To-Do".into())
+            .set_title("" /* .into() */);
     }
 
     #[test]
     #[should_panic(expected = "Description cannot be empty")]
     fn description_cannot_be_empty() {
-        Ticket::new(valid_title(), valid_description(), "To-Do".into()).set_description("".into());
+        Ticket::new(valid_title(), valid_description(), "To-Do".into())
+            .set_description("" /* .into() */);
     }
 
     #[test]
@@ -93,6 +128,7 @@ mod tests {
     #[test]
     #[should_panic(expected = "Only `To-Do`, `In Progress`, and `Done` statuses are allowed")]
     fn status_must_be_valid() {
-        Ticket::new(valid_title(), valid_description(), "To-Do".into()).set_status("Funny".into());
+        Ticket::new(valid_title(), valid_description(), "To-Do".into())
+            .set_status("Funny" /* .into() */);
     }
 }
